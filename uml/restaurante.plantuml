@@ -1,0 +1,64 @@
+@startuml Restaurante
+class Restaurant{
+    String name
+    String address
+
+}
+
+class Table{
+    Integer tableNumber
+    Integer capacity
+    Boolean isOccupied
+}
+
+class MenuItem{
+    String name
+    Double price
+}
+
+class OrderItem{
+    //MenuItem menuItem
+    Integer quantity
+}
+
+'las ordenes tienen status que nunca cambian, por tanto es buena ide usar enums'
+
+class Order{
+    Integer orderNumber
+    OrderStatus status
+}
+
+enum OrderStatus{
+    PENDING
+    IN_PROGRESS
+    DELIVERED
+}
+
+class Menu{
+    String name
+}
+
+class Employee{
+    String name
+
+    Employee(String name): void
+    getName(): String
+}
+
+'estas son relaciones de agregacion'
+Restaurant "1" o-- "1..*" Table
+Restaurant "1" o-- "1..*" Employee
+Restaurant o-- Menu 
+
+'Relacion de asociacion'
+Table "1" -- "0..5" Order
+MenuItem "1..*" --o "0..*" OrderItem
+
+'Relacion de composicion'
+Menu "1" *--  "1..*" MenuItem
+Order *-- OrderItem
+
+'Relacion que generamos nosotros'
+Order --> OrderStatus: status
+
+@enduml
