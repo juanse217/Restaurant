@@ -1,31 +1,55 @@
 @startuml Restaurante
-class Restaurant{
-    String name
-    String address
 
+'estas son relaciones de agregacion de Restaurante'
+Restaurant "1" o-- "1..*" Table
+Restaurant "1" o-- "1..*" Employee
+Restaurant o-- Menu 
+
+class Restaurant{
+    -String name
+    -String address
+
+    +displayMenu(): void
+    +findTable(): Table
 }
 
+'Relacion de asociacion'
+Table "1" -- "1" Order
 class Table{
-    Integer tableNumber
-    Integer capacity
-    Boolean isOccupied
+    -Integer tableNumber
+    -Integer capacity
+    -Boolean isOccupied
+
+    +assignOrder(Order: order):void
+    +clearTable():void
+    +getCurrentOrder(): Order
+
 }
 
 class MenuItem{
-    String name
-    Double price
+    -String name
+    -Double price
 }
 
+MenuItem "1..*" --o "0..*" OrderItem
+
 class OrderItem{
-    //MenuItem menuItem
-    Integer quantity
+    -Integer quantity
+    +calculateSubTotal(): Double
 }
 
 'las ordenes tienen status que nunca cambian, por tanto es buena ide usar enums'
+Order *-- OrderItem
 
+'Relacion que generamos nosotros'
+Order --> OrderStatus: status
 class Order{
-    Integer orderNumber
-    OrderStatus status
+    -Integer orderNumber
+    -OrderStatus status
+
+    +addItem(OrderItem: item): void
+    +calculateTotal(): Double
+    +displayDetails(): void
 }
 
 enum OrderStatus{
@@ -34,8 +58,12 @@ enum OrderStatus{
     DELIVERED
 }
 
+'Relacion de composicion'
+Menu "1" o--  "1..*" MenuItem
 class Menu{
-    String name
+    -String name
+    +displayItems(): void
+    +findItem(String: itemName): void
 }
 
 class Employee{
@@ -44,21 +72,5 @@ class Employee{
     Employee(String name): void
     getName(): String
 }
-
-'estas son relaciones de agregacion'
-Restaurant "1" o-- "1..*" Table
-Restaurant "1" o-- "1..*" Employee
-Restaurant o-- Menu 
-
-'Relacion de asociacion'
-Table "1" -- "0..5" Order
-MenuItem "1..*" --o "0..*" OrderItem
-
-'Relacion de composicion'
-Menu "1" *--  "1..*" MenuItem
-Order *-- OrderItem
-
-'Relacion que generamos nosotros'
-Order --> OrderStatus: status
 
 @enduml
